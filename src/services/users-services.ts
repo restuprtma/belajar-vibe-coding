@@ -35,7 +35,7 @@ export const loginUser = async (payload: any) => {
     throw new Error("email atau password salah");
   }
 
-  const user = existingUser[0];
+  const user = existingUser[0]!;
 
   // Verifikasi password
   const isPasswordValid = await Bun.password.verify(password, user.password);
@@ -76,7 +76,7 @@ export const getCurrentUser = async (token?: string) => {
     throw new Error("Unauthorized");
   }
 
-  const user = result[0];
+  const user = result[0]!;
 
   return {
     data: {
