@@ -58,7 +58,7 @@ export const loginUser = async (payload: any) => {
 
 export const getCurrentUser = async (token?: string) => {
   if (!token) {
-    throw new Error("Unauthorize");
+    throw new Error("Unauthorized");
   }
 
   const result = await db
@@ -73,7 +73,7 @@ export const getCurrentUser = async (token?: string) => {
     .where(eq(sessions.token, token));
 
   if (result.length === 0) {
-    throw new Error("Unauthorize");
+    throw new Error("Unauthorized");
   }
 
   const user = result[0];
@@ -90,15 +90,10 @@ export const getCurrentUser = async (token?: string) => {
 
 export const logoutUser = async (token?: string) => {
   if (!token) {
-    throw new Error("Unauthorize");
+    throw new Error("Unauthorized");
   }
 
-  const existingSession = await db.select().from(sessions).where(eq(sessions.token, token));
-  
-  if (existingSession.length === 0) {
-    throw new Error("Unauthorize");
-  }
-
+  // Idempotent delete (optimasi 1 hit database)
   await db.delete(sessions).where(eq(sessions.token, token));
 
   return { data: "ok" };

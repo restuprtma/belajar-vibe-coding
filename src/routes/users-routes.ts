@@ -39,33 +39,32 @@ export const usersRoutes = new Elysia({ prefix: "/api/users" })
       }),
     }
   )
+  .derive(({ headers }) => {
+    const authHeader = headers.authorization;
+    const token = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : undefined;
+    return { token };
+  })
   .get(
     "/current",
-    async ({ headers, set }) => {
+    async ({ token, set }) => {
       try {
-        const authHeader = headers.authorization;
-        const token = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : undefined;
-        
         const result = await getCurrentUser(token);
         return result;
       } catch (error: any) {
         set.status = 401; // Unauthorized
-        return { error: "Unauthorize" };
+        return { error: error.message };
       }
     }
   )
   .get(
     "/logout",
-    async ({ headers, set }) => {
+    async ({ token, set }) => {
       try {
-        const authHeader = headers.authorization;
-        const token = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : undefined;
-        
         const result = await logoutUser(token);
         return result;
       } catch (error: any) {
         set.status = 401; // Unauthorized
-        return { error: "Unauthorize" };
+        return { error: error.message };
       }
     }
   );
