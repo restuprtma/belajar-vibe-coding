@@ -1,8 +1,10 @@
 import { Elysia } from "elysia";
 import { db } from "./db";
 import { users } from "./db/schema";
+import { usersRoutes } from "./routes/users-routes";
 
 const app = new Elysia()
+  .use(usersRoutes)
   .get("/", () => "Hello World")
   .get("/users", async () => {
     // This will error if the database is not set up, but serves as a test endpoint
