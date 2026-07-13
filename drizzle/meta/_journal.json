@@ -8,6 +8,13 @@
       "when": 1783933341101,
       "tag": "0000_wonderful_joystick",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1783934200062,
+      "tag": "0001_even_talos",
+      "breakpoints": true
     }
   ]
 }
