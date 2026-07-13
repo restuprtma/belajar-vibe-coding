@@ -35,7 +35,7 @@ export const loginUser = async (payload: any) => {
     throw new Error("email atau password salah");
   }
 
-  const user = existingUser[0];
+  const user = existingUser[0]!;
 
   // Verifikasi password
   const isPasswordValid = await Bun.password.verify(password, user.password);
@@ -58,7 +58,7 @@ export const loginUser = async (payload: any) => {
 
 export const getCurrentUser = async (token?: string) => {
   if (!token) {
-    throw new Error("Unauthorize");
+    throw new Error("Unauthorized");
   }
 
   const result = await db
@@ -73,10 +73,10 @@ export const getCurrentUser = async (token?: string) => {
     .where(eq(sessions.token, token));
 
   if (result.length === 0) {
-    throw new Error("Unauthorize");
+    throw new Error("Unauthorized");
   }
 
-  const user = result[0];
+  const user = result[0]!;
 
   return {
     data: {
@@ -86,4 +86,15 @@ export const getCurrentUser = async (token?: string) => {
       created_at: user.createdAt,
     },
   };
+};
+
+export const logoutUser = async (token?: string) => {
+  if (!token) {
+    throw new Error("Unauthorized");
+  }
+
+  // Idempotent delete (optimasi 1 hit database)
+  await db.delete(sessions).where(eq(sessions.token, token));
+
+  return { data: "ok" };
 };
